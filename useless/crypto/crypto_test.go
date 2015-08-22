@@ -9,11 +9,11 @@ var (
 )
 
 func TestGenerateKey(t *testing.T) {
-	key, err := GenerateKey(AES256)
+	key, err := GenerateKey(AES128)
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("%s", key)
+	t.Logf("%s\n", key)
 	GeneratedKey = key
 }
 
@@ -31,5 +31,5 @@ func TestDecryptBytes(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("%x\n", b)
+	t.Logf("%s\n", b)
 }

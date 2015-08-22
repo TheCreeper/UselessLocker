@@ -12,6 +12,9 @@ var (
 )
 
 // Pad adds padding, with each padded byte being the total number of bytes added.
+//
+// Example for a blocksize of 8:
+// -> [DD DD DD DD 04 04 04 04]
 func Pad(b []byte, size int) (out []byte, err error) {
 	if size < 1 || size >= 256 {
 		return nil, ErrBlockSize
@@ -31,5 +34,13 @@ func UnPad(b []byte, size int) (out []byte, err error) {
 	if len(b)%size != 0 {
 		return nil, ErrByteBlockSize
 	}
-	return b[:len(b)-1], nil
+
+	// Get total number of bytes
+	blen := len(b)
+
+	// Get the total number of bytes added to the slice
+	padlen := int(b[blen-1])
+
+	// Remove padding by only returning the non-padded bytes at the beginning of the slice.
+	return b[:(blen - padlen)], nil
 }

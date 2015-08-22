@@ -47,7 +47,7 @@ func EncryptBytes(key, b []byte) (ciphertext []byte, err error) {
 
 	ciphertext = make([]byte, aes.BlockSize+len(b))
 	iv := ciphertext[:aes.BlockSize]
-	if _, err = rand.Read(b); err != nil {
+	if _, err = rand.Read(iv); err != nil {
 		return
 	}
 
@@ -70,12 +70,15 @@ func DecryptBytes(key, ciphertext []byte) (b []byte, err error) {
 		return
 	}
 
-	ciphertext, err = pkcs7.UnPad(ciphertext, aes.BlockSize)
-	if err != nil {
-		return
-	}
+	// Get size of ciphertext not including the iv.
+	b = make([]byte, len(ciphertext[aes.BlockSize:]))
 
 	dec := cipher.NewCBCDecrypter(cb, ciphertext[:aes.BlockSize])
 	dec.CryptBlocks(b, ciphertext[aes.BlockSize:])
+
+	b, err = pkcs7.UnPad(b, aes.BlockSize)
+	if err != nil {
+		return
+	}
 	return
 }
