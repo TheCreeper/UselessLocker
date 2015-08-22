@@ -1,13 +1,13 @@
-package crypto
+package pwgen
 
 import (
 	"crypto/rand"
 	"math/big"
 )
 
-var StdChars = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+,.?/:;{}[]`~")
+const StdChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+,.?/:;{}[]`~"
 
-func GeneratePassword(size int) (password []byte, err error) {
+func Generate(size int) (password []byte, err error) {
 	for i := 0; i < size; i++ {
 		c, err := RandChar()
 		if err != nil {

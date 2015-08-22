@@ -6,10 +6,15 @@ import (
 	"errors"
 )
 
+var (
+	ErrBlockSize     = errors.New("useless/crypto/pkcs7: block size is out of bounds")
+	ErrByteBlockSize = errors.New("useless/crypto/pkcs7: byte length is not a multiple of the block size")
+)
+
 // Pad adds padding, with each padded byte being the total number of bytes added.
 func Pad(b []byte, size int) (out []byte, err error) {
 	if size < 1 || size >= 256 {
-		return nil, errors.New("useless/crypto/pkcs7: block size is out of bounds")
+		return nil, ErrBlockSize
 	}
 
 	padding := size - len(b)%size
@@ -20,11 +25,11 @@ func Pad(b []byte, size int) (out []byte, err error) {
 // UnPad removes padding.
 func UnPad(b []byte, size int) (out []byte, err error) {
 	if size < 1 || size >= 256 {
-		return nil, errors.New("useless/crypto/pkcs7: block size is out of bounds")
+		return nil, ErrBlockSize
 	}
 
 	if len(b)%size != 0 {
-		return nil, errors.New("useless/crypto/pkcs7: byte length is not a multiple of the block size")
+		return nil, ErrByteBlockSize
 	}
 	return b[:len(b)-1], nil
 }
