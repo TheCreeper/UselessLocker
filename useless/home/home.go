@@ -5,6 +5,8 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+
+	//"golang.org/x/net/proxy"
 )
 
 // Phone makes a connection to a http server somewhere on the internet and transmits the
@@ -21,6 +23,8 @@ func Phone(u string, uid string, key string) (err error) {
 	if err != nil {
 		return
 	}
+	defer resp.Body.Close()
+
 	if resp.StatusCode >= 300 {
 		return errors.New("useless/home: Remote server could not be reached. Status >= 300")
 	}

@@ -11,7 +11,9 @@ var (
 	ErrByteBlockSize = errors.New("useless/crypto/pkcs7: byte length is not a multiple of the block size")
 )
 
-// Pad adds padding, with each padded byte being the total number of bytes added.
+// Pad adds padding, with each padded byte being the total number of bytes added. Byte slice
+// should always be padded even if its a multiple of the block size. This makes it easier
+// to unpad bytes if we can safely assume they are always padded.
 //
 // Example for a blocksize of 8:
 // -> [DD DD DD DD 04 04 04 04]
