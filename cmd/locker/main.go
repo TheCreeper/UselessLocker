@@ -7,6 +7,11 @@ import (
 )
 
 func main() {
+	// Safety pin
+	if true {
+		return
+	}
+
 	if err := useless.Start(); err != nil {
 		log.Fatal(err)
 	}

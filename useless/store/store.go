@@ -1,106 +1,99 @@
-//go:generate go-bindata -pkg=store -o=./bin.go -prefix=../../ ../../assets
+// Package store attempts to open the currently running or specified executable as a zip file. It also provides a means to easily find and access files within the archive.
 package store
 
 import (
 	"archive/zip"
-	"debug/elf"
+	"errors"
 	"io"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 )
 
-type Store struct{ TmpDir string }
+// Errors
+var (
+	ErrNoFile = errors.New("useless/store: File does not exist within archive")
+)
 
-// Open will attempt to find and extract a gzipped tar archive inside or appended to an executable.
-func Open() (s Store, err error) {
+type Store struct{ zr *zip.ReadCloser }
+
+// Open will attempt to find the path of the executable and open a zip reader. This relies on
+// argv[0] being the relative path to the executable and in most cases this is true.
+func Open() (Store, error) {
 	// Get the full path of the running exectable. This can be unreliable if argv[0] is
 	// different than what is expected.
 	filename, err := GetExecPath()
 	if err != nil {
-		return
+		return Store{}, err
 	}
+	return OpenFile(filename)
+}
 
-	// Open the executable with the read only flag
-	file, err := os.Open(filename)
+// OpenFile will attempt to read the specified file regardless if its a executable or zip file.
+func OpenFile(filename string) (Store, error) {
+	file, err := zip.OpenReader(filename)
 	if err != nil {
-		return
+		return Store{}, err
 	}
-	defer file.Close()
+	return Store{file}, nil
+}
 
-	// Get the file size of the executable
-	finfo, err := file.Stat()
-	if err != nil {
-		return
-	}
-
-	// Create a new temp directory to untar the files into
-	tmpdir, err := ioutil.TempDir(os.TempDir(), "store")
-	if err != nil {
-		return
-	}
-	s.TmpDir = tmpdir
-
-	// Look for a gzip file in the executable and return the gzip reader
-	zr, err := elfZipReader(file, finfo.Size())
-	if err != nil {
-		return
-	}
-	for _, f := range zr.File {
-		// Open a reader to the file within the archive
-		rc, err := f.Open()
-		if err != nil {
-			return Store{}, err
-		}
-		defer rc.Close()
-
-		// Create a file in the temp folder with the same name as in the tar archive
-		nfile, err := os.Create(filepath.Join(s.TmpDir, f.Name))
-		if err != nil {
-			return Store{}, err
-		}
-
-		// Copy the bytes from the tar archive to the newly created file
-		_, err = io.Copy(nfile, rc)
-		if err != nil {
-			return Store{}, err
-		}
-	}
-	return
+// Close will close the underlaying zip reader.
+func (s Store) Close() error {
+	return s.zr.Close()
 }
 
 // Load will attempt to look for a file within the store matching the specified filename. A
 // filepath must be relative to the file store.
-func (s Store) Load(filename string) (b []byte, err error) {
-	return ioutil.ReadFile(filepath.Join(s.TmpDir, filename))
+func (s Store) Load(filename string) ([]byte, error) {
+	for _, file := range s.zr.File {
+		if file.Name != filename {
+			continue
+		}
+
+		rc, err := file.Open()
+		if err != nil {
+			return nil, err
+		}
+
+		b := make([]byte, file.FileInfo().Size())
+		if _, err := rc.Read(b); err != nil {
+			return nil, err
+		}
+		return b, nil
+	}
+	return nil, ErrNoFile
 }
 
-func elfZipReader(r io.ReaderAt, size int64) (*zip.Reader, error) {
+// LoadReader behaves the same as Load expect that it returns a io.ReadCloser for the
+// specified file.
+func (s Store) LoadReader(filename string) (rc io.ReadCloser, err error) {
+	for _, file := range s.zr.File {
+		if file.Name != filename {
+			continue
+		}
+
+		rc, err = file.Open()
+		if err != nil {
+			return
+		}
+		return
+	}
+	return nil, ErrNoFile
+}
+
+/*func elfGetSize(r io.ReaderAt) (size int64, err error) {
 	file, err := elf.NewFile(r)
 	if err != nil {
-		return nil, err
+		return
 	}
-
-	var max int64
 	for _, sect := range file.Sections {
 		if sect.Type == elf.SHT_NOBITS {
 			continue
 		}
 
-		zr, err := zip.NewReader(sect, int64(sect.Size))
-		if err == nil {
-			// There is a zip file here.
-			return zr, nil
-		}
-
 		// Move end of file pointer
 		end := int64(sect.Offset + sect.Size)
-		if end > max {
-			max = end
+		if end > size {
+			size = end
 		}
 	}
-
-	// If zip archive not within binary. Check to see if its appended to the end.
-	section := io.NewSectionReader(r, max, size-max)
-	return zip.NewReader(section, section.Size())
-}
+	return
+}*/

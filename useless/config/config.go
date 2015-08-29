@@ -18,3 +18,10 @@ func Load(filename string) (cfg Config, err error) {
 	}
 	return
 }
+
+func LoadBytes(b []byte) (cfg Config, err error) {
+	if err = json.Unmarshal(b, &cfg); err != nil {
+		return
+	}
+	return
+}

