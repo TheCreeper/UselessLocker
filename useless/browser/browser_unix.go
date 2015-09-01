@@ -1,3 +1,4 @@
+// +build linux dragonfly freebsd netbsd openbsd
 package browser
 
 import "os/exec"

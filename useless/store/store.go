@@ -4,7 +4,8 @@ package store
 import (
 	"archive/zip"
 	"errors"
-	"io"
+	"os"
+	"os/exec"
 )
 
 // Errors
@@ -12,13 +13,17 @@ var (
 	ErrNoFile = errors.New("useless/store: File does not exist within archive")
 )
 
+// GetExecPath gets the path of the executable on the filesystem. This can be unreliable as
+// it expects argv[0] to be the name/path of the executable.
+func GetExecPath() (string, error) {
+	return exec.LookPath(os.Args[0])
+}
+
 type Store struct{ zr *zip.ReadCloser }
 
-// Open will attempt to find the path of the executable and open a zip reader. This relies on
+// Open will try to find the path of the executable and open a zip reader. This relies on
 // argv[0] being the relative path to the executable and in most cases this is true.
 func Open() (Store, error) {
-	// Get the full path of the running exectable. This can be unreliable if argv[0] is
-	// different than what is expected.
 	filename, err := GetExecPath()
 	if err != nil {
 		return Store{}, err
@@ -26,7 +31,7 @@ func Open() (Store, error) {
 	return OpenFile(filename)
 }
 
-// OpenFile will attempt to read the specified file regardless if its a executable or zip file.
+// OpenFile will try to read the specified file regardless if its a executable or zip file.
 func OpenFile(filename string) (Store, error) {
 	file, err := zip.OpenReader(filename)
 	if err != nil {
@@ -53,47 +58,16 @@ func (s Store) Load(filename string) ([]byte, error) {
 			return nil, err
 		}
 
-		b := make([]byte, file.FileInfo().Size())
-		if _, err := rc.Read(b); err != nil {
+		fileBytes := make([]byte, file.FileInfo().Size())
+		if _, err := rc.Read(fileBytes); err != nil {
 			return nil, err
 		}
-		return b, nil
+		return fileBytes, nil
 	}
 	return nil, ErrNoFile
 }
 
-// LoadReader behaves the same as Load expect that it returns a io.ReadCloser for the
-// specified file.
-func (s Store) LoadReader(filename string) (rc io.ReadCloser, err error) {
-	for _, file := range s.zr.File {
-		if file.Name != filename {
-			continue
-		}
-
-		rc, err = file.Open()
-		if err != nil {
-			return
-		}
-		return
-	}
-	return nil, ErrNoFile
-}
-
-/*func elfGetSize(r io.ReaderAt) (size int64, err error) {
-	file, err := elf.NewFile(r)
-	if err != nil {
-		return
-	}
-	for _, sect := range file.Sections {
-		if sect.Type == elf.SHT_NOBITS {
-			continue
-		}
-
-		// Move end of file pointer
-		end := int64(sect.Offset + sect.Size)
-		if end > size {
-			size = end
-		}
-	}
+// ExtractTo will look for the a filename/dir and extract the contents to the specified directory.
+func (s Store) ExtractTo(filename string, to string) (err error) {
 	return
-}*/
+}

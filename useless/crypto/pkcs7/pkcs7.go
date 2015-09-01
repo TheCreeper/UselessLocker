@@ -1,4 +1,4 @@
-// PKCS7 implements PKCS#7 padding, described at http://tools.ietf.org/html/rfc5652#section-6.3.
+// Package pkcs7 implements PKCS#7 padding, described at http://tools.ietf.org/html/rfc5652#section-6.3.
 package pkcs7
 
 import (

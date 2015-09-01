@@ -7,8 +7,10 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/pem"
 	"errors"
+	"io/ioutil"
 
 	"github.com/TheCreeper/UselessLocker/useless/crypto/pkcs7"
 	"github.com/TheCreeper/UselessLocker/useless/crypto/pwgen"
@@ -56,6 +58,8 @@ func EncryptBytes(key, b []byte) (ciphertext []byte, err error) {
 	}
 
 	ciphertext = make([]byte, aes.BlockSize+len(b))
+
+	// It's important we use a random iv every time we wish to encrypt some bytes.
 	iv := ciphertext[:aes.BlockSize]
 	if _, err = rand.Read(iv); err != nil {
 		return
@@ -96,6 +100,43 @@ func DecryptBytes(key, ciphertext []byte) (b []byte, err error) {
 	return
 }
 
+// EncryptFile will attempt to copy the contents of the specified file into memory and then encrypt
+// it using the provided key. The orginal file contents is over written with the encrypted bytes
+// in memory.
+func EncryptFile(key []byte, filename string) (err error) {
+	b, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return
+	}
+
+	ciphertext, err := EncryptBytes(key, b)
+	if err != nil {
+		return
+	}
+	return ioutil.WriteFile(filename, ciphertext, 0644)
+}
+
+// DecryptFile will attempt to copy the contents of the specified file into memory and then decrypt
+// it using the provided key. The orginal file contents is over written with the decrypted bytes
+// in memory.
+func DecryptFile(key []byte, filename string) (err error) {
+	// Copy file contents into memory before decrypting and overwriting it.
+	ciphertext, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return
+	}
+
+	// Decrypt file contents using the provided key.
+	b, err := DecryptBytes(key, ciphertext)
+	if err != nil {
+		return
+	}
+
+	// Copy the decrypted file contents from memory to disk. Overwrite the file
+	// contents.
+	return ioutil.WriteFile(filename, b, 0644)
+}
+
 // EncryptKey can be used to encrypt a AES key with the provided RSA public key. The ciphertext
 // can only be decrypted using the RSA private key of the public key.
 func EncryptKey(pubBytes, key []byte) (ciphertext []byte, err error) {
@@ -110,5 +151,11 @@ func EncryptKey(pubBytes, key []byte) (ciphertext []byte, err error) {
 	if !ok {
 		return
 	}
-	return rsa.EncryptOAEP(sha256.New(), rand.Reader, pub, key, nil)
+
+	b, err := rsa.EncryptOAEP(sha256.New(), rand.Reader, pub, key, nil)
+	if err != nil {
+		return
+	}
+	base64.StdEncoding.Encode(ciphertext, b)
+	return
 }
