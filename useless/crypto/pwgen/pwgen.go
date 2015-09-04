@@ -7,8 +7,8 @@ import (
 
 const StdChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+,.?/:;{}[]`~"
 
-// Generate will attempt to generate a password of the specified size. There is no limit on the
-// length.
+// Generate will attempt to generate a password of the specified size.
+// There is no limit on the length.
 func Generate(size int) (password []byte, err error) {
 	for i := 0; i < size; i++ {
 		c, err := RandChar()

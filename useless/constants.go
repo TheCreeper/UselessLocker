@@ -1,9 +1,9 @@
 package useless
 
 const (
-	PathStoreConfig    = "assets/config.json"
-	PathStorePage      = "assets/html"
-	PathStorePublicKey = "assets/master.pem"
+	PathConfig    = "assets/config.json"
+	PathHTML      = "assets/html"
+	PathPublicKey = "assets/master.pem"
 )
 
 const (

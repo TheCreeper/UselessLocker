@@ -13,18 +13,18 @@ func Start() (err error) {
 	if err != nil {
 		return
 	}
+	defer s.Close()
 
-	/*cfgBytes, err := s.Load(PathStoreConfig)
+	if err = s.UnPack(); err != nil {
+		return
+	}
+
+	pubBytes, err := s.Load(PathPublicKey)
 	if err != nil {
 		return
 	}
 
-	cfg, err := config.ParseBytes(cfgBytes)
-	if err != nil {
-		return
-	}*/
-
-	key, err := CreateSession(s)
+	key, err := CreateSession(pubBytes)
 	if err != nil {
 		return
 	}
@@ -36,6 +36,5 @@ func Start() (err error) {
 }
 
 func OpenBrowser(s store.Store) (err error) {
-	//return browser.OpenFile(filename)
 	return
 }

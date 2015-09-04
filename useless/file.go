@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 )
 
-// GetFileList compiles a list of files that are less than or equal to the specified file size.
-// The file list is returned as a string slice with full location path.
+// GetFileList compiles a list of files that match any of the extensions in the
+// FileExtensions map and are less than or equal to the specified file size.
 func GetFileList(dirname string, size int64) (files []string, err error) {
 	list, err := ioutil.ReadDir(dirname)
 	if err != nil {
@@ -47,7 +47,8 @@ func WriteFileList(dirname string, files []string) (err error) {
 	return
 }
 
-// ReadFileList reads a list of files contained in a file within the users home directory.
+// ReadFileList reads a list of files contained in a file within the users
+// home directory.
 func ReadFileList(dirname string) (files []string, err error) {
 	b, err := ioutil.ReadFile(filepath.Join(dirname, PathFileList))
 	if err != nil {

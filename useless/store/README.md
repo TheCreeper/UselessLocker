@@ -2,7 +2,9 @@
 
 [![go-store](https://godoc.org/github.com/TheCreeper/go-store?status.png)](http://godoc.org/github.com/TheCreeper/go-store)
 
-Package store attempts to open the currently running or specified executable as a zip file. It also provides a means to easily find and access files within the archive.
+Package store attempts to open the currently running or specified executable as
+a zip archive. It also provides a means to easily find and access files within
+the archive.
 
 ## Examples
 

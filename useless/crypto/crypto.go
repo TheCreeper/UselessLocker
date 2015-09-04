@@ -30,8 +30,8 @@ var (
 	ErrCipherTextSize = errors.New("useless/crypto: ciphertext is not a multiple of the block size")
 )
 
-// GenerateKey will attempt to generate a secure aes key of specified size. The aes key can only be
-// 16, 24, or 32 bytes in length.
+// GenerateKey will attempt to generate a secure aes key of specified size.
+// The aes key can only be 16, 24, or 32 bytes in length.
 func GenerateKey(size int) ([]byte, error) {
 	// Check key size
 	if (size != AES128) && (size != AES192) && (size != AES256) {
@@ -40,8 +40,8 @@ func GenerateKey(size int) ([]byte, error) {
 	return pwgen.Generate(size)
 }
 
-// EncryptBytes will encrypted a byte slice using the provided key. Padding will be added using
-// the pkcs7 padding scheme.
+// EncryptBytes will encrypted a byte slice using the provided key. Padding
+// will be added using the pkcs7 padding scheme.
 func EncryptBytes(key, b []byte) (ciphertext []byte, err error) {
 	if len(key)%aes.BlockSize != 0 {
 		return nil, ErrKeyBlockSize
@@ -59,7 +59,7 @@ func EncryptBytes(key, b []byte) (ciphertext []byte, err error) {
 
 	ciphertext = make([]byte, aes.BlockSize+len(b))
 
-	// It's important we use a random iv every time we wish to encrypt some bytes.
+	// It's important that we always use a random iv.
 	iv := ciphertext[:aes.BlockSize]
 	if _, err = rand.Read(iv); err != nil {
 		return
@@ -70,9 +70,8 @@ func EncryptBytes(key, b []byte) (ciphertext []byte, err error) {
 	return
 }
 
-// DecryptBytes will attempt to decrypt the ciphertext using the provided AES key. The ciphertext
-// will be unpadded using the pkcs7 padding scheme.
-// The AES key and ciphertext should be a multiple of the aes block size (16).
+// DecryptBytes will attempt to decrypt the ciphertext using the provided
+// AES key. The ciphertext will be unpadded using the pkcs7 padding scheme.
 func DecryptBytes(key, ciphertext []byte) (b []byte, err error) {
 	if len(key)%aes.BlockSize != 0 {
 		return nil, ErrKeyBlockSize
@@ -100,9 +99,9 @@ func DecryptBytes(key, ciphertext []byte) (b []byte, err error) {
 	return
 }
 
-// EncryptFile will attempt to copy the contents of the specified file into memory and then encrypt
-// it using the provided key. The orginal file contents is over written with the encrypted bytes
-// in memory.
+// EncryptFile will attempt to copy the contents of the specified file into
+// memory and then encrypt it using the provided key. The orginal file contents
+// is over written with the encrypted bytes in memory.
 func EncryptFile(key []byte, filename string) (err error) {
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -116,9 +115,9 @@ func EncryptFile(key []byte, filename string) (err error) {
 	return ioutil.WriteFile(filename, ciphertext, 0644)
 }
 
-// DecryptFile will attempt to copy the contents of the specified file into memory and then decrypt
-// it using the provided key. The orginal file contents is over written with the decrypted bytes
-// in memory.
+// DecryptFile will attempt to copy the contents of the specified file into
+// memory and then decrypt it using the provided key. The orginal file contents
+// is over written with the decrypted bytes in memory.
 func DecryptFile(key []byte, filename string) (err error) {
 	// Copy file contents into memory before decrypting and overwriting it.
 	ciphertext, err := ioutil.ReadFile(filename)
@@ -132,13 +131,14 @@ func DecryptFile(key []byte, filename string) (err error) {
 		return
 	}
 
-	// Copy the decrypted file contents from memory to disk. Overwrite the file
-	// contents.
+	// Copy the decrypted file contents from memory to disk.
+	// Overwrite the file contents.
 	return ioutil.WriteFile(filename, b, 0644)
 }
 
-// EncryptKey can be used to encrypt a AES key with the provided RSA public key. The ciphertext
-// can only be decrypted using the RSA private key of the public key.
+// EncryptKey can be used to encrypt a AES key with the provided RSA
+// public key. The ciphertext can only be decrypted using the RSA private key
+// of the public key.
 func EncryptKey(pubBytes, key []byte) (ciphertext []byte, err error) {
 	block, _ := pem.Decode(pubBytes)
 	pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)

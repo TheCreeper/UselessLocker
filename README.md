@@ -5,7 +5,8 @@
 | |__| |\__ \|  __/| ||  __/\__ \\__ \ | |____| (_) || (__ |   <|  __/| |
  \____/ |___/ \___||_| \___||___/|___/ |______|\___/  \___||_|\_\\___||_|
 ```
-Randomware-like sample that can be easily modified and used. For educational purposes.
+Randomware-like sample that can be easily modified and used. For educational
+purposes.
 
 ## Features
 
@@ -13,7 +14,7 @@ Randomware-like sample that can be easily modified and used. For educational pur
 - Uses RSA + AES128/256 CBC PKCS7.
 - Sends encryption key to a server.
 - Works offline.
-- Store the necessary files in a zip archive appended to the executable (public key, config, html).
+- Store any necessary files in a zip archive appended to the executable.
 - Opens a webpage to notify the user.
 - Uses only the go standard library.
 
@@ -25,13 +26,14 @@ Randomware-like sample that can be easily modified and used. For educational pur
 
 ## Usage
 
-This software lacks several components that require a significant amount of work to implement. This is left upto the reader to do.
+This software lacks several components that require a significant amount of
+work to implement. This is left upto the reader to do.
 
 - Remove the safety pin.
 
 - Compile the software.
 
-- Create a webserver that is capable of processing requests from useless locker.
+- Create a webserver capable of processing requests from useless locker.
 
 - Generate a private/public key pair using openssl or similar.
 
@@ -58,4 +60,7 @@ zip -q -A myprogram
 
 ## Legal
 
-This is a fun peice of software that I enjoyed writing. I learned a few things while writing this and I hope that others can too. Please do not use this for ransomware or otherwise malicious purposes. This is only meant to be used for educational purposes.
+This is a fun peice of software that I enjoyed writing. I learned a few things
+while writing this and I hope that others can too. Please do not use this for
+ransomware or otherwise malicious purposes. This is only meant to be used for
+educational purposes.
