@@ -14,8 +14,10 @@ func GetFileList(dirname string, size int64) (files []string, err error) {
 		return
 	}
 	for _, file := range list {
+		path := filepath.Join(dirname, file.Name())
+
 		if file.IsDir() {
-			fl, err := GetFileList(filepath.Join(dirname, file.Name()), size)
+			fl, err := GetFileList(path, size)
 			if err != nil {
 				return nil, err
 			}
@@ -26,7 +28,7 @@ func GetFileList(dirname string, size int64) (files []string, err error) {
 		if file.Mode().IsRegular() &&
 			(file.Size() <= size) &&
 			FileExtensions[filepath.Ext(file.Name())] {
-			files = append(files, filepath.Join(dirname, file.Name()))
+			files = append(files, path)
 		}
 	}
 	return
@@ -41,7 +43,8 @@ func WriteFileList(dirname string, files []string) (err error) {
 		data = append(data, []byte(string('\n'))...)
 	}
 
-	if err = ioutil.WriteFile(filepath.Join(dirname, PathFileList), data, 0644); err != nil {
+	path := filepath.Join(dirname, PathFileList)
+	if err = ioutil.WriteFile(path, data, 0644); err != nil {
 		return
 	}
 	return

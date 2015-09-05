@@ -15,10 +15,6 @@ func Start() (err error) {
 	}
 	defer s.Close()
 
-	if err = s.UnPack(); err != nil {
-		return
-	}
-
 	pubBytes, err := s.Load(PathPublicKey)
 	if err != nil {
 		return
@@ -32,9 +28,5 @@ func Start() (err error) {
 	if err = EncryptHome(key); err != nil {
 		return
 	}
-	return
-}
-
-func OpenBrowser(s store.Store) (err error) {
 	return
 }

@@ -30,15 +30,10 @@ This software lacks several components that require a significant amount of
 work to implement. This is left upto the reader to do.
 
 - Remove the safety pin.
-
 - Compile the software.
-
 - Create a webserver capable of processing requests from useless locker.
-
 - Generate a private/public key pair using openssl or similar.
-
 - Create zip archive of all the files in the required hierarchy.
-
 - Append zip archive onto executable.
 
 ## Appending the zip archive
