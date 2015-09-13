@@ -16,7 +16,7 @@ if err != nil {
 }
 defer s.Close()
 
-file, err := s.Load("helloworld.txt")
+file, err := s.ReadFile("helloworld.txt")
 if err != nil {
 	panic(err)
 }
@@ -31,7 +31,7 @@ if err != nil {
 }
 defer s.Close()
 
-file, err := s.Load("helloworld.txt")
+file, err := s.ReadFile("helloworld.txt")
 if err != nil {
 	panic(err)
 }

@@ -9,7 +9,7 @@ func TestOpen(t *testing.T) {
 	}
 	defer s.Close()
 
-	file, err := s.Load("helloworld.txt")
+	file, err := s.ReadFile("helloworld.txt")
 	if err != nil {
 		t.Fatal(err)
 	}

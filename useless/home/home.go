@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"time"
 
-	//"golang.org/x/net/proxy"
+	"golang.org/x/net/proxy"
 )
 
 // Phone makes a connection to a http server somewhere on the internet and
@@ -24,16 +24,13 @@ func Phone(u, uid, key string) (err error) {
 	if err != nil {
 		return
 	}
-	resp.Body.Close()
-	return
+	return resp.Body.Close()
 }
 
-func PhoneRetry(u, uid, key string, retry int) (err error) {
-	go func(u, uid, key string, retry int) {
-		if err = Phone(u, uid, key); err != nil {
-			return
-		}
-		time.Sleep(time.Duration(retry) * time.Second)
-	}(u, uid, key, retry)
+func PhoneProxy(p, u, uid, key string) (err error) {
+	dialer, err := proxy.FromURL(p, proxy.Dialer)
+	if err != nil {
+		return
+	}
 	return
 }

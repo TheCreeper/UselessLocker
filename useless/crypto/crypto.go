@@ -119,13 +119,11 @@ func EncryptFile(key []byte, filename string) (err error) {
 // memory and then decrypt it using the provided key. The orginal file contents
 // is over written with the decrypted bytes in memory.
 func DecryptFile(key []byte, filename string) (err error) {
-	// Copy file contents into memory before decrypting and overwriting it.
 	ciphertext, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return
 	}
 
-	// Decrypt file contents using the provided key.
 	b, err := DecryptBytes(key, ciphertext)
 	if err != nil {
 		return

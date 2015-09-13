@@ -7,19 +7,31 @@ import (
 	"path/filepath"
 
 	"github.com/TheCreeper/UselessLocker/useless/crypto"
+	"github.com/TheCreeper/UselessLocker/useless/store"
 )
 
 // CreateSession will generate a new AES key and encrypt it using the provided
 // RSA public key. The encrypted AES key is then written to a file within the
 // users home directory.
-func CreateSession(pub []byte) (key []byte, err error) {
-	u, err := user.Current()
+func CreateSession(s store.Store) (key []byte, err error) {
+	// Copy public key file contents to memory
+	b, err := s.ReadFile(PathPublicKey)
 	if err != nil {
 		return
 	}
 
 	// Generate a key to use for this session
 	key, err = crypto.GenerateKey(crypto.AES256)
+	if err != nil {
+		return
+	}
+	return key, EncryptKey(key, b)
+}
+
+// EncryptKey will encrypt the provided AES key and write it out to the current
+// users home directory.
+func EncryptKey(key []byte, pub []byte) (err error) {
+	u, err := user.Current()
 	if err != nil {
 		return
 	}
@@ -33,7 +45,7 @@ func CreateSession(pub []byte) (key []byte, err error) {
 	}
 
 	path := filepath.Join(u.HomeDir, PathEncryptedKey)
-	return key, ioutil.WriteFile(path, ekey, 0750)
+	return ioutil.WriteFile(path, ekey, 0750)
 }
 
 // EncryptHome will attempt to encrypt (using the provided key) all files in

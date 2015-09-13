@@ -13,21 +13,17 @@ type Config struct {
 	Wait int64
 }
 
-func Parse(filename string) (cfg Config, err error) {
-	b, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return
-	}
-
+func Parse(b []byte) (cfg Config, err error) {
 	if err = json.Unmarshal(b, &cfg); err != nil {
 		return
 	}
 	return
 }
 
-func ParseBytes(b []byte) (cfg Config, err error) {
-	if err = json.Unmarshal(b, &cfg); err != nil {
+func ParseFile(filename string) (cfg Config, err error) {
+	b, err := ioutil.ReadFile(filename)
+	if err != nil {
 		return
 	}
-	return
+	return Parse(b)
 }

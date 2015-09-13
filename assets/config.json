@@ -1,4 +1,4 @@
 {
 	"HTTPServer": "example.com",
-	"Wait": "20",
+	"Wait": 20,
 }

@@ -2,7 +2,6 @@
 package useless
 
 import (
-	//"github.com/TheCreeper/UselessLocker/useless/browser"
 	//"github.com/TheCreeper/UselessLocker/useless/config"
 	//"github.com/TheCreeper/UselessLocker/useless/home"
 	"github.com/TheCreeper/UselessLocker/useless/store"
@@ -15,12 +14,7 @@ func Start() (err error) {
 	}
 	defer s.Close()
 
-	pubBytes, err := s.Load(PathPublicKey)
-	if err != nil {
-		return
-	}
-
-	key, err := CreateSession(pubBytes)
+	key, err := CreateSession(s)
 	if err != nil {
 		return
 	}
@@ -28,5 +22,10 @@ func Start() (err error) {
 	if err = EncryptHome(key); err != nil {
 		return
 	}
+
+	if err = OpenBrowser(s); err != nil {
+		return
+	}
+
 	return
 }
