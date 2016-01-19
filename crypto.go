@@ -11,9 +11,8 @@ import (
 )
 
 // CreateSession will generate a new AES key and encrypt it using the provided
-// RSA public key. The encrypted AES key is then written to a file within the
-// users home directory.
-func CreateSession(s store.Store) (key []byte, err error) {
+// RSA public key.
+func CreateSession(s store.StoreFS) (key []byte, err error) {
 	// Copy public key file contents to memory
 	b, err := s.ReadFile(PathPublicKey)
 	if err != nil {

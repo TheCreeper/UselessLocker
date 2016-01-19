@@ -7,7 +7,6 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/x509"
-	"encoding/base64"
 	"encoding/pem"
 	"errors"
 	"io/ioutil"
@@ -149,11 +148,5 @@ func EncryptKey(pubBytes, key []byte) (ciphertext []byte, err error) {
 	if !ok {
 		return
 	}
-
-	b, err := rsa.EncryptOAEP(sha256.New(), rand.Reader, pub, key, nil)
-	if err != nil {
-		return
-	}
-	base64.StdEncoding.Encode(ciphertext, b)
-	return
+	return rsa.EncryptOAEP(sha256.New(), rand.Reader, pub, key, nil)
 }

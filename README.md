@@ -14,9 +14,8 @@ purposes.
 - Uses RSA + AES128/256 CBC PKCS7.
 - Sends encryption key to a server.
 - Works offline.
-- Store any necessary files in a zip archive appended to the executable.
 - Opens a webpage to notify the user.
-- Uses only the go standard library.
+- Store any necessary files in a zip archive appended to the executable.
 
 ## Requirements
 
@@ -38,20 +37,7 @@ work to implement. This is left upto the reader to do.
 
 ## Appending the zip archive
 
-Fist create a zip archive
-```
-zip -r my.zip assets/
-```
-
-Append the zip archive to the end of the executable
-```
-cat my.zip >> myprogram
-```
-
-Fix the zip offset in the file
-```
-zip -q -A myprogram
-```
+Follow the instructions in the store [README](store/README.md).
 
 ## Legal
 

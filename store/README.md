@@ -40,22 +40,22 @@ println(string(file))
 
 ## How to Use
 
-Fist create a zip archive
+Fist create a zip archive.
 ```
 zip my.zip my.file
 ```
 
-Compile your code
+Compile your code.
 ```
 go build -o myprogram
 ```
 
-Append the zip archive to the end of the executable
+Append the zip archive to the end of the executable.
 ```
 cat my.zip >> myprogram
 ```
 
-Fix the zip offset in the file
+Fix the zip offset.
 ```
 zip -q -A myprogram
 ```

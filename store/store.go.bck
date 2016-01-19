@@ -7,6 +7,7 @@ import (
 	"archive/zip"
 	"errors"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -30,35 +31,41 @@ func Open() (Store, error) {
 // OpenFile will try to read the specified file regardless if its a executable
 // or zip file.
 func OpenFile(filename string) (Store, error) {
-	file, err := zip.OpenReader(filename)
+	rc, err := zip.OpenReader(filename)
 	if err != nil {
 		return Store{}, err
 	}
-	return Store{file}, nil
+	return Store{rc}, nil
+}
+
+// Open will attempt to look for a file within the store matching the specified
+// filepath relative to the store. If found the zip.File object is returned.
+func (s Store) Open(filename string) (*zip.File, error) {
+	for _, file := range s.File {
+		if file.FileInfo().IsDir() || file.Name != filename {
+			continue
+		}
+		return file, nil
+	}
+	return nil, errors.New("useless/store: File could not be found")
 }
 
 // ReadFile will attempt to look for a file within the store matching the
 // specified filepath relative to the store. If found the file contents are
 // copied to memory.
-func (s Store) ReadFile(filename string) ([]byte, error) {
-	for _, file := range s.File {
-		if file.FileInfo().IsDir() || file.Name != filename {
-			continue
-		}
-
-		rc, err := file.Open()
-		if err != nil {
-			return nil, err
-		}
-		defer rc.Close()
-
-		fileBytes := make([]byte, file.FileInfo().Size())
-		if _, err := rc.Read(fileBytes); err != nil {
-			return nil, err
-		}
-		return fileBytes, nil
+func (s Store) ReadFile(filename string) (b []byte, err error) {
+	file, err := s.Open(filename)
+	if err != nil {
+		return
 	}
-	return nil, errors.New("useless/store: File does not exist")
+
+	rc, err := file.Open()
+	if err != nil {
+		return
+	}
+	defer rc.Close()
+
+	return ioutil.ReadAll(rc)
 }
 
 // Unpack will copy the contents of the store to the specified location on the

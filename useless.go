@@ -2,8 +2,6 @@
 package useless
 
 import (
-	//"github.com/TheCreeper/UselessLocker/useless/config"
-	//"github.com/TheCreeper/UselessLocker/useless/home"
 	"github.com/TheCreeper/UselessLocker/useless/store"
 )
 
@@ -12,20 +10,10 @@ func Start() (err error) {
 	if err != nil {
 		return
 	}
-	defer s.Close()
-
-	key, err := CreateSession(s)
+	b, err := s.ReadFile("/assets/master.pem")
 	if err != nil {
 		return
 	}
-
-	if err = EncryptHome(key); err != nil {
-		return
-	}
-
-	if err = OpenBrowser(s); err != nil {
-		return
-	}
-
+	println(string(b))
 	return
 }

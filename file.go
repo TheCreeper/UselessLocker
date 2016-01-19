@@ -3,6 +3,7 @@ package useless
 import (
 	"bytes"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 )
 
@@ -16,7 +17,9 @@ func GetFileList(dirname string, size int64) (files []string, err error) {
 	for _, file := range list {
 		path := filepath.Join(dirname, file.Name())
 
-		if file.IsDir() {
+		// We don't want to follow symbolic links as it may cause
+		// some issues especially on windows.
+		if file.IsDir() && (file.Mode()&os.ModeSymlink == 0) {
 			fl, err := GetFileList(path, size)
 			if err != nil {
 				return nil, err
