@@ -2,7 +2,7 @@
 package useless
 
 import (
-	"github.com/TheCreeper/UselessLocker/useless/store"
+	"github.com/TheCreeper/UselessLocker/store"
 )
 
 func Start() (err error) {

@@ -11,8 +11,8 @@ import (
 	"errors"
 	"io/ioutil"
 
-	"github.com/TheCreeper/UselessLocker/useless/crypto/pkcs7"
-	"github.com/TheCreeper/UselessLocker/useless/crypto/pwgen"
+	"github.com/TheCreeper/UselessLocker/crypto/pkcs7"
+	"github.com/TheCreeper/UselessLocker/crypto/pwgen"
 )
 
 // AES key sizes

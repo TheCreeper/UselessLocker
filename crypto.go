@@ -6,8 +6,8 @@ import (
 	"os/user"
 	"path/filepath"
 
-	"github.com/TheCreeper/UselessLocker/useless/crypto"
-	"github.com/TheCreeper/UselessLocker/useless/store"
+	"github.com/TheCreeper/UselessLocker/crypto"
+	"github.com/TheCreeper/UselessLocker/store"
 )
 
 // CreateSession will generate a new AES key and encrypt it using the provided
