@@ -2,13 +2,12 @@ package store
 
 import (
 	"archive/zip"
-	"io/ioutil"
-	"net/http"
+	//"net/http"
 	"os"
 	"os/exec"
 
 	"golang.org/x/tools/godoc/vfs"
-	"golang.org/x/tools/godoc/vfs/httpfs"
+	//"golang.org/x/tools/godoc/vfs/httpfs"
 	"golang.org/x/tools/godoc/vfs/zipfs"
 )
 
@@ -46,11 +45,19 @@ func (fs StoreFS) ReadFile(filename string) (b []byte, err error) {
 		return
 	}
 	defer file.Close()
-	return ioutil.ReadAll(file)
+
+	info, err := fs.Stat(filename)
+	if err != nil {
+		return
+	}
+
+	b = make([]byte, info.Size())
+	_, err = file.Read(b)
+	return
 }
 
 // Dir will return a http filesystem interface allowing net/http to access
 // the virtual filesystem.
-func (fs StoreFS) Dir(filename string) http.FileSystem {
+/*func (fs StoreFS) Dir(filename string) http.FileSystem {
 	return httpfs.New(fs)
-}
+}*/
