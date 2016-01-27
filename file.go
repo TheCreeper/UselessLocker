@@ -1,8 +1,7 @@
 package useless
 
 import (
-	"bytes"
-	"io/ioutil"
+	"bufio"
 	"os"
 	"path/filepath"
 )
@@ -10,64 +9,71 @@ import (
 // GetFileList compiles a list of files that match any of the extensions in the
 // FileExtensions map and are less than or equal to the specified file size.
 func GetFileList(dirname string, size int64) (files []string, err error) {
-	list, err := ioutil.ReadDir(dirname)
-	if err != nil {
-		return
-	}
-	for _, file := range list {
-		path := filepath.Join(dirname, file.Name())
-
-		// We don't want to follow symbolic links as it may cause
-		// some issues especially on windows.
-		if file.IsDir() && (file.Mode()&os.ModeSymlink == 0) {
-			fl, err := GetFileList(path, size)
-			if err != nil {
-				return nil, err
-			}
-			files = append(files, fl...)
-			continue
+	walkFn := func(path string, info os.FileInfo, err error) error {
+		// Can't walk here.
+		if err != nil {
+			// Continue walking elsewhere.
+			return nil
 		}
 
-		if file.Mode().IsRegular() &&
-			(file.Size() <= size) &&
-			FileExtensions[filepath.Ext(file.Name())] {
-			files = append(files, path)
+		// Check if this is a regular file otherwise skip it.
+		if !info.Mode().IsRegular() {
+			return nil
 		}
+
+		// Check if this has a size equal or less than to the specified
+		// file size.
+		if !(info.Size() <= size) {
+			return nil
+		}
+
+		// Check if this has a file extension that is in the
+		// FileExtensions map.
+		if !FileExtensions[filepath.Ext(info.Name())] {
+			return nil
+		}
+
+		files = append(files, path)
+		return nil
 	}
+
+	err = filepath.Walk(dirname, walkFn)
 	return
 }
 
 // WriteFileList writes a list of files to the specified directory.
-func WriteFileList(dirname string, files []string) (err error) {
-	// Add a newline character after every filepath
-	var data []byte
-	for _, v := range files {
-		data = append(data, []byte(v)...)
-		data = append(data, []byte(string('\n'))...)
-	}
-
-	path := filepath.Join(dirname, PathFileList)
-	if err = ioutil.WriteFile(path, data, 0644); err != nil {
+func WriteFileList(filename string, files []string) (err error) {
+	f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
 		return
+	}
+	defer f.Close()
+
+	for _, filepath := range files {
+		_, err = f.WriteString(filepath + "\n")
+		if err != nil {
+			return
+		}
 	}
 	return
 }
 
 // ReadFileList reads a list of files contained in a file within the users
 // home directory.
-func ReadFileList(dirname string) (files []string, err error) {
-	b, err := ioutil.ReadFile(filepath.Join(dirname, PathFileList))
+func ReadFileList(filename string) (files []string, err error) {
+	file, err := os.Open(filename)
 	if err != nil {
 		return
 	}
+	defer file.Close()
 
-	buf := bytes.NewBuffer(b)
-	for {
-		line, err := buf.ReadString('\n')
-		if err != nil {
-			return nil, err
-		}
-		files = append(files, line)
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		// Append each line of the file list to the files string
+		// slice.
+		files = append(files, scanner.Text())
 	}
+
+	err = scanner.Err()
 	return
 }

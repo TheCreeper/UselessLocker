@@ -15,18 +15,18 @@ import (
 	"github.com/TheCreeper/UselessLocker/crypto/pwgen"
 )
 
+// Errors
+var (
+	ErrCipherTextSize = errors.New("useless/crypto: ciphertext is not a multiple of the block size")
+	ErrKeyBlockSize   = errors.New("useless/crypto: key size is not a multiple of the block size")
+	ErrKeySize        = errors.New("useless/crypto: Key size should be either 16, 24, or 32")
+)
+
 // AES key sizes
 const (
 	AES128 = 16
 	AES192 = 24
 	AES256 = 32
-)
-
-// Errors
-var (
-	ErrKeySize        = errors.New("useless/crypto: Key size should be either 16, 24, or 32")
-	ErrKeyBlockSize   = errors.New("useless/crypto: key size is not a multiple of the block size")
-	ErrCipherTextSize = errors.New("useless/crypto: ciphertext is not a multiple of the block size")
 )
 
 // GenerateKey will attempt to generate a secure aes key of specified size.
@@ -39,7 +39,7 @@ func GenerateKey(size int) ([]byte, error) {
 	return pwgen.Generate(size)
 }
 
-// EncryptBytes will encrypted a byte slice using the provided key. Padding
+// EncryptBytes will encrypt a byte slice using the provided key. Padding
 // will be added using the pkcs7 padding scheme.
 func EncryptBytes(key, b []byte) (ciphertext []byte, err error) {
 	if len(key)%aes.BlockSize != 0 {
@@ -149,4 +149,9 @@ func EncryptKey(pubBytes, key []byte) (ciphertext []byte, err error) {
 		return
 	}
 	return rsa.EncryptOAEP(sha256.New(), rand.Reader, pub, key, nil)
+}
+
+func DecryptKey(privBytes, ciphertext []byte) (err error) {
+	privKeyBlock, _ := pem.Decode()
+	return
 }
