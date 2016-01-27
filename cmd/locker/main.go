@@ -61,7 +61,7 @@ func main() {
 	}
 
 	// Get a list of files in the users home directory that are less
-	// than 10MB
+	// than 10MB.
 	ls, err := useless.GetFileList(usr.HomeDir, 10485760)
 	if err != nil {
 		log.Fatal(err)

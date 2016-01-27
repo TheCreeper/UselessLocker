@@ -151,7 +151,7 @@ func EncryptKey(pubBytes, key []byte) (ciphertext []byte, err error) {
 	return rsa.EncryptOAEP(sha256.New(), rand.Reader, pub, key, nil)
 }
 
-func DecryptKey(privBytes, ciphertext []byte) (err error) {
+/*func DecryptKey(privBytes, ciphertext []byte) (err error) {
 	privKeyBlock, _ := pem.Decode()
 	return
-}
+}*/

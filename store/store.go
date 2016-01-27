@@ -27,6 +27,8 @@ func Open() (StoreFS, error) {
 	return OpenFile(filename)
 }
 
+// OpenFile will try to read the specified file regardless if it's a executable
+// or zip file.
 func OpenFile(filename string) (StoreFS, error) {
 	rc, err := zip.OpenReader(filename)
 	if err != nil {
@@ -35,6 +37,9 @@ func OpenFile(filename string) (StoreFS, error) {
 	return StoreFS{zipfs.New(rc, filename)}, nil
 }
 
+// ReadFile will attempt to look for a file within the store matching the
+// specified filepath relative to the store. If found the file contents are
+// copied to memory.
 func (fs StoreFS) ReadFile(filename string) (b []byte, err error) {
 	file, err := fs.Open(filename)
 	if err != nil {
@@ -44,6 +49,8 @@ func (fs StoreFS) ReadFile(filename string) (b []byte, err error) {
 	return ioutil.ReadAll(file)
 }
 
+// Dir will return a http filesystem interface allowing net/http to access
+// the virtual filesystem.
 func (fs StoreFS) Dir(filename string) http.FileSystem {
 	return httpfs.New(fs)
 }
