@@ -11,17 +11,11 @@ purposes.
 ## Features
 
 - Highly portable. Should run on Windows/Linux/BSD.
-- Uses RSA + AES128/256 CBC PKCS7.
-- Sends encryption key to a server.
-- Works offline.
 - Opens a webpage to notify the user.
+- Sends encryption key to a server.
 - Store any necessary files in a zip archive appended to the executable.
-
-## Requirements
-
-- Linux/BSD/cygwin enviroment
-- Golang
-- zip
+- Uses RSA + AES128/256 CBC PKCS7.
+- Works offline.
 
 ## Usage
 
